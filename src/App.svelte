@@ -1,29 +1,28 @@
 <script>
-  import { push, pop, replace } from "svelte-spa-router";
+  import { replace } from "svelte-spa-router";
+  import Router from "svelte-spa-router";
+  import { routes } from "./routes.js";
   import Header from "./components/Header.svelte";
   import Footer from "./components/Footer.svelte";
-  import Router, { link } from "svelte-spa-router";
-  import { routes } from "./routes.js";
-  import { onMount } from "svelte";
+import { onMount } from "svelte";
 
-  let user = null;
-
+  let userSession = null;
   onMount(() => {
-    user = localStorage.getItem("userStorage");
-    console.log("🚀 ~ file: App.svelte ~ line 13 ~ onMount ~ user", user)
+    console.log("En el homeeeeee");
+    userSession = localStorage.getItem("userStorage");
   });
 
   const conditionsFailed = (event) => {
-    console.log("🚀 ~ file: App.svelte ~ line 17 ~ conditionsFailed ~ event", event)
+    console.log(
+      "🚀 ~ file: App.svelte ~ line 17 ~ conditionsFailed ~ event",
+      event
+    );
     if (event.detail.location === "/login") replace("/");
   };
 </script>
 
 <main>
-  <Header userSession={user} />
+  <Header userSession={userSession}/>
   <Router {routes} on:conditionsFailed={conditionsFailed} />
-  <Footer />
+  <Footer/>
 </main>
-
-<style>
-</style>

@@ -1,4 +1,4 @@
-import Home from "./pages/Home.svelte";
+import Home from './pages/Home.svelte'
 import Login from "./pages/Login.svelte";
 import { wrap } from "svelte-spa-router/wrap";
 

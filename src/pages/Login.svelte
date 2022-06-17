@@ -1,8 +1,15 @@
 <script>
-  import { push, pop, replace } from "svelte-spa-router";
+  import { push } from "svelte-spa-router";
   import logoChatbot from "./../assets/chatbot.png";
   import { userStorage } from "./../store.js";
   import { login } from "./../api/auth.js";
+  import { onMount } from "svelte";
+
+  let userSession = null;
+  onMount(() => {
+    console.log("En el homeeeeee");
+    userSession = localStorage.getItem("userStorage");
+  });
 
   let user = {
     emailOrCode: "",
