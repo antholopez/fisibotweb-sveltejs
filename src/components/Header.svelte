@@ -3,41 +3,92 @@
   import { link, push } from "svelte-spa-router";
   import logo from "./../assets/svelte.png";
   import { userStorage } from "./../store.js";
+  import { createCourse } from "./../api/course.js";
+
   export let userSession;
+  export let schools = [];
+  const defaultImage =
+    "https://inlogiq.com/wp-content/uploads/2021/06/blog-4.png";
+
+  $: if (userSession) userSession = userSession;
+  $: if (schools.length) schools = schools;
 
   const groups = [
     { id: 1, name: 1 },
     { id: 2, name: 2 },
   ];
-  const schools = [
-    { id: 1, name: "Ingeniería en Software" },
-    { id: 2, name: "Ingeniería en Sistemas" },
+  const academicSemesters = [{ name: "2022-1" }, { name: "2022-2" }];
+  const cycles = [
+    { name: "I" },
+    { name: "II" },
+    { name: "III" },
+    { name: "IV" },
+    { name: "V" },
+    { name: "VI" },
+    { name: "VII" },
+    { name: "VIII" },
+    { name: "IX" },
+    { name: "X" },
   ];
+
   let course = {
     name: null,
+    description: null,
+    image: null,
+    academicSemester: null,
+    cycle: null,
     group: null,
-    school: null,
+    idSchool: null,
   };
+  let loading = false;
   let disabled = true;
 
+  const defaultAcademicSemester = "Selecciona un semestre";
+  course.academicSemester = defaultAcademicSemester;
+  const defaultCycle = "Selecciona un ciclo";
+  course.cycle = defaultCycle;
   const defaultGroup = "Selecciona un grupo";
   course.group = defaultGroup;
   const defaultSchool = "Seleccion una escuela";
-  course.school = defaultSchool;
+  course.idSchool = defaultSchool;
 
-  $: course.name && course.group > 0 && course.school > 0
+  $: course.name &&
+  course.group > 0 &&
+  course.idSchool > 0 &&
+  academicSemesters.filter((as) => as.name === course.academicSemester)
+    .length &&
+  cycles.filter((c) => c.name === course.cycle).length
     ? (disabled = false)
     : (disabled = true);
 
   const clearCourse = () => {
     course.name = null;
+    course.description = null;
+    course.image = null;
+    course.academicSemester = defaultAcademicSemester;
+    course.cycle = defaultCycle;
     course.group = defaultGroup;
-    course.school = defaultSchool;
+    course.idSchool = defaultSchool;
   };
 
-  const createCourse = async () => {
-    console.log('course', course);
-  }
+  const createNewCourse = async () => {
+    try {
+      loading = true;
+      disabled = true;
+
+      course.description = course.name;
+      course.image = defaultImage;
+      await createCourse(course);
+      await push("/");
+      location.reload();
+
+      disabled = false;
+      loading = false;
+    } catch (error) {
+      console.log("error", error);
+      loading = false;
+    }
+  };
 
   const closeSession = async () => {
     try {
@@ -113,7 +164,7 @@
                 />
               </div>
               <div class="modal-body">
-                <form on:submit|preventDefault={createCourse}>
+                <form on:submit|preventDefault={createNewCourse}>
                   <div class="form-floating mb-3">
                     <input
                       type="text"
@@ -123,6 +174,36 @@
                       bind:value={course.name}
                     />
                     <label for="floatingInput">Nombre del curso</label>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <select
+                      class="form-select"
+                      id="floatingSelect"
+                      aria-label="Floating label select example"
+                      bind:value={course.academicSemester}
+                    >
+                      <option selected>{defaultAcademicSemester}</option>
+                      {#each academicSemesters as academicSemester}
+                        <option value={academicSemester.name}
+                          >{academicSemester.name}</option
+                        >
+                      {/each}
+                    </select>
+                    <label for="floatingPassword">Semestre académico</label>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <select
+                      class="form-select"
+                      id="floatingSelect"
+                      aria-label="Floating label select example"
+                      bind:value={course.cycle}
+                    >
+                      <option selected>{defaultCycle}</option>
+                      {#each cycles as cycle}
+                        <option value={cycle.name}>{cycle.name}</option>
+                      {/each}
+                    </select>
+                    <label for="floatingPassword">Ciclo</label>
                   </div>
                   <div class="form-floating mb-3">
                     <select
@@ -143,7 +224,7 @@
                       class="form-select"
                       id="floatingSelect"
                       aria-label="Floating label select example"
-                      bind:value={course.school}
+                      bind:value={course.idSchool}
                     >
                       <option selected>{defaultSchool}</option>
                       {#each schools as school}
@@ -157,12 +238,14 @@
                       type="button"
                       class="btn btn-outline-secondary"
                       data-bs-dismiss="modal"
+                      disabled={loading}
                       on:click={clearCourse}>Cancelar</button
                     >
                     <button
                       type="submit"
                       class="btn btn-outline-success"
-                      {disabled}>Crear</button
+                      {disabled}
+                      >{#if !loading}Crear{:else}Creando...{/if}</button
                     >
                   </div>
                 </form>
