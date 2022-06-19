@@ -49,6 +49,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
+      - name: Config env variables
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          touch .env.production
+          echo VITE_API_BASE_URL=${VITE_API_BASE_URL} >> .env.production
+          echo BASE_URL=${BASE_URL} >> .env.production
+          echo PORT=${PORT} >> .env.production
+
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -58,38 +69,35 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:buildcache,mode=max
 
-  # deploy:
-  #   needs: build-and-push
-  #   runs-on: ubuntu-latest
+      - name: Delete config env variables
+        run: |
+          rm -rf .env.production
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
     
-  #   steps:
-  #     - uses: actions/checkout@v2 
-  #     - name: Deploy in EC2
-  #       env:
-  #         PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
-  #         HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
-  #         USER_NAME: ${{ secrets.AWS_USERNAME }}
-  #         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  #         DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
-  #         DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  #         PORT: ${{ secrets.PORT }}
+    steps:
+      - uses: actions/checkout@v2 
+      - name: Deploy in EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+          HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
+          USER_NAME: ${{ secrets.AWS_USERNAME }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
 
-  #       run: |
-  #         echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
-  #         ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} << EOF
-  #           #Now we have got the access of EC2 and we will start the deploy .
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} << EOF
+            #Now we have got the access of EC2 and we will start the deploy .
 
-  #           touch .env.development
-  #           echo DATABASE_URL=${DATABASE_URL} >> .env.development
-  #           echo PORT=${PORT} >> .env.development
+            docker --version
+            docker pull ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
+            docker stop ${DOCKER_REPOSITORY} || true
+            docker rm ${DOCKER_REPOSITORY} || true
+            docker run -p ${PORT}:${PORT} -d --restart unless-stopped --hostname ${DOCKER_REPOSITORY} --name ${DOCKER_REPOSITORY} ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
 
-  #           docker --version
-  #           docker pull ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
-  #           docker stop ${DOCKER_REPOSITORY} || true
-  #           docker rm ${DOCKER_REPOSITORY} || true
-  #           docker run -p ${PORT}:${PORT} --env-file ./.env.development -d --restart unless-stopped --hostname ${DOCKER_REPOSITORY} --name ${DOCKER_REPOSITORY} ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
+            docker image prune -f
 
-  #           docker image prune -f
-  #           rm -rf .env.development
-
-  #         EOF
+          EOF
