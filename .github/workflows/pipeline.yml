@@ -63,7 +63,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} << EOF
 
             docker pull ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
-            docker login --username ${DOCKER_USERNAME} --password ${DOCKER_TOKEN}
+            ${DOCKER_TOKEN} | docker login --username ${DOCKER_USERNAME} --password-stdin
 
           EOF
 
