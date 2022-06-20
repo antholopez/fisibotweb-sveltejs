@@ -72,6 +72,11 @@ jobs:
       - name: build
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }} -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest .
 
+      - name: push
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
+
       # - name: Build and push
       #   env:
       #     PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
@@ -101,14 +106,14 @@ jobs:
 
       #     EOF
 
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }}, ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:buildcache,mode=max
+      # - name: Build and push
+      #   uses: docker/build-push-action@v3
+      #   with:
+      #     builder: ${{ steps.buildx.outputs.name }}
+      #     push: true
+      #     tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }}, ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
+      #     cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:buildcache
+      #     cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:buildcache,mode=max
 
 
   # deploy:
