@@ -50,34 +50,49 @@ jobs:
       #     password: ${{ secrets.DOCKER_TOKEN }}
 
       - uses: actions/checkout@v2
-      - name: Build and push
-        env:
-          PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
-          HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
-          USER_NAME: ${{ secrets.AWS_USERNAME }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
-          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-          GIT_COMMIT: ${{ github.sha }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-          BASE_URL: ${{ secrets.BASE_URL }}
-          PORT: ${{ secrets.PORT }}
 
+      - name: docker login
+        run: docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_TOKEN }}
+
+      - name: set envs
         run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} << EOF
+          touch .env.production
+          echo VITE_API_BASE_URL=${VITE_API_BASE_URL} >> .env.production
+          echo BASE_URL=${BASE_URL} >> .env.production
+          echo PORT=${PORT} >> .env.production
+          echo NAME=Anthony >> .env.production
 
-            touch .env.production
-            echo VITE_API_BASE_URL=${VITE_API_BASE_URL} >> .env.production
-            echo BASE_URL=${BASE_URL} >> .env.production
-            echo PORT=${PORT} >> .env.production
+      - name: read envs
+        run: cat .env.production
 
-            docker pull ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
-            docker login --username ${DOCKER_USERNAME} --password ${DOCKER_TOKEN}
+      # - name: Build and push
+      #   env:
+      #     PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+      #     HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
+      #     USER_NAME: ${{ secrets.AWS_USERNAME }}
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #     DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
+      #     DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+      #     GIT_COMMIT: ${{ github.sha }}
+      #     VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+      #     BASE_URL: ${{ secrets.BASE_URL }}
+      #     PORT: ${{ secrets.PORT }}
 
-            docker build -t ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:${GIT_COMMIT} -t ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest .
+      #   run: |
+      #     echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
+      #     ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} << EOF
 
-          EOF
+      #       touch .env.production
+      #       echo VITE_API_BASE_URL=${VITE_API_BASE_URL} >> .env.production
+      #       echo BASE_URL=${BASE_URL} >> .env.production
+      #       echo PORT=${PORT} >> .env.production
+
+      #       docker pull ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
+      #       docker login --username ${DOCKER_USERNAME} --password ${DOCKER_TOKEN}
+
+      #       docker build -t ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:${GIT_COMMIT} -t ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest .
+
+      #     EOF
 
       # - name: Build and push
       #   uses: docker/build-push-action@v3
