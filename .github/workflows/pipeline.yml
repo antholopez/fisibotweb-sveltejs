@@ -35,7 +35,7 @@ jobs:
       - name: set envs
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-          
+
         run: |
           touch .env.production
           echo VITE_API_BASE_URL=${VITE_API_BASE_URL} >> .env.production
@@ -82,5 +82,6 @@ jobs:
             docker run -p ${PORT}:${PORT} -d --restart unless-stopped --hostname ${DOCKER_REPOSITORY} --name ${DOCKER_REPOSITORY} ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}:latest
 
             docker image prune -f
+            rm -rf .env.production
 
           EOF
