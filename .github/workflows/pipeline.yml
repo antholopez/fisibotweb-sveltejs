@@ -70,7 +70,7 @@ jobs:
         run: cat .env.production
 
       - name: build
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }} -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest -f .env.production .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }} -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest --build-arg VITE_API_BASE_URL=${VITE_API_BASE_URL} --build-arg BASE_URL=${BASE_URL} --build-arg PORT=${PORT} --build-arg NAME=ANTHONY .
 
       - name: push
         run: |
