@@ -6,7 +6,7 @@ export default defineConfig(({ command, mode }) => {
   console.log("mode: ", mode);
   const env = loadEnv(mode, process.cwd(), "");
   console.log("env: ", env);
-  const { BASE_URL, PORT } = loadEnv(mode, process.cwd(), "");
+  const { BASE_URL, PORT, VITE_API_BASE_URL } = loadEnv(mode, process.cwd(), "");
   return {
     plugins: [svelte()],
     base: mode === "production" ? BASE_URL : "/",
@@ -19,5 +19,8 @@ export default defineConfig(({ command, mode }) => {
       host: "localhost",
       open: true,
     },
+    define: {
+      API_BASE_URL: VITE_API_BASE_URL,
+    }
   };
 });
