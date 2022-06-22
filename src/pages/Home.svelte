@@ -11,6 +11,7 @@
 
   onMount(async () => {
     userSession = JSON.parse(localStorage.getItem("userStorage"));
+    console.log("🚀 ~ file: Home.svelte ~ line 14 ~ onMount ~ userSession", userSession);
     if (userSession) {
       loading = true;
       courses = await getCourses();

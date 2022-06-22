@@ -13,7 +13,11 @@
   onMount(async () => {
     userSession = JSON.parse(localStorage.getItem("userStorage"));
     if (userSession) {
-      schools = !schools.length ? await getSchools() : schools;
+      try {
+        schools = !schools.length ? await getSchools() : schools;
+      } catch (error) {
+        console.log("🚀 ~ file: App.svelte ~ line 19 ~ onMount ~ error", error);
+      }
     }
   });
 
@@ -27,7 +31,7 @@
 </script>
 
 <main>
-  <Header userSession={userSession} schools={schools}/>
+  <Header {userSession} {schools} />
   <Router {routes} on:conditionsFailed={conditionsFailed} />
   <Footer />
 </main>

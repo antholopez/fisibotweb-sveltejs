@@ -16,6 +16,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "js-cookie": "^3.0.1",
+    "noty": "^3.2.0-beta-deprecated",
     "svelte-spa-router": "^3.2.0"
   }
 }
