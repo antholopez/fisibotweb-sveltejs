@@ -3,13 +3,8 @@
   import logoChatbot from "./../assets/chatbot.png";
   import { userStorage } from "./../store.js";
   import { login } from "./../api/auth.js";
-  import { onMount } from "svelte";
-
-  let userSession = null;
-  onMount(() => {
-    console.log("En el homeeeeee");
-    userSession = localStorage.getItem("userStorage");
-  });
+  import Header from "./../components/Header.svelte";
+  import { notify } from "./../utils/notification.js";
 
   let user = {
     emailOrCode: "",
@@ -26,7 +21,7 @@
       $userStorage = response;
       await push("/");
       loading = false;
-      location.reload();
+      notify("success", "Bienvenido", "Inicio de sesión exitoso");
     } catch (error) {
       console.log("error", error);
       loading = false;
@@ -34,6 +29,7 @@
   };
 </script>
 
+<Header />
 <div class="container form-signin w-100">
   <form on:submit|preventDefault={onSubmitHandler}>
     <img

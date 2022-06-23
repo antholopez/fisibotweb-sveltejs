@@ -4,6 +4,8 @@
   import chatbotHome from "./../assets/chatbot-telegram.png";
   import { getCourses } from "./../api/course.js";
   import Loading from "./../components/Loading.svelte";
+  import Header from "./../components/Header.svelte";
+  import { userStorage } from "./../store.js";
 
   let loading = false;
   let userSession = null;
@@ -11,7 +13,7 @@
 
   onMount(async () => {
     userSession = JSON.parse(localStorage.getItem("userStorage"));
-    console.log("🚀 ~ file: Home.svelte ~ line 14 ~ onMount ~ userSession", userSession);
+    console.log("userSession Home", userSession);
     if (userSession) {
       loading = true;
       courses = await getCourses();
@@ -20,6 +22,7 @@
   });
 </script>
 
+<Header/>
 {#if loading}
   <Loading />
 {:else if !userSession}

@@ -1,6 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { link, push } from "svelte-spa-router";
+import Notify from "simple-notify";
+import { notify } from "./utils/notification";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -12,14 +14,12 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((config) => {
-  console.log(
-    "🚀 ~ file: axios.js ~ line 13 ~ instance.interceptors.request.use ~ config",
-    config
-  );
+  console.log("axios request: ", config);
 
   const bearerToken = Cookies.get("jwt");
   if (bearerToken) {
     config.headers.Authorization = `Bearer ${bearerToken}`;
+    isAuthenticated = true;
   }
 
   return config;
@@ -27,18 +27,35 @@ instance.interceptors.request.use((config) => {
 
 instance.interceptors.response.use(
   (config) => {
+    console.log("axios response ok: ", config);
     return config;
   },
   async (error) => {
-    console.log("interceptors.response error: ", error);
     const { response } = error;
     const { status, statusText } = response;
-    if (status === 401 && statusText === "Unauthorized") {
-      localStorage.removeItem("userStorage");
-      Cookies.remove("jwt");
-      await push("/login");
-      // alert("You are not authorized to access this page.");
+    if (status === 401 && statusText === "Unauthorized" && !isAuthenticated) {
+      try {
+        const url = error.config.url;
+        localStorage.removeItem("userStorage");
+        Cookies.remove("jwt");
+        await push("/login");
+        if (url === "/authentication/login")
+          notify(
+            "error",
+            "Credenciales inválidas",
+            "Por favor verifique sus credenciales"
+          );
+        else
+          notify(
+            "error",
+            "Sesión expirada",
+            "Por favor inicia sesión nuevamente"
+          );
+      } catch (err) {
+        console.log("axios response: ", err);
+      }
     }
+    isAuthenticated = false;
   }
 );
 

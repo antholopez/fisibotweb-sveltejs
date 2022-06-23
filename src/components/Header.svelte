@@ -1,17 +1,23 @@
 <script>
   import { logout } from "./../api/auth.js";
-  import { link, push } from "svelte-spa-router";
+  import { link, push, replace } from "svelte-spa-router";
   import logo from "./../assets/svelte.png";
   import { userStorage } from "./../store.js";
   import { createCourse } from "./../api/course.js";
+  import { getSchools } from "./../api/schools.js";
+  import { onMount } from "svelte";
+  import { notify } from "./../utils/notification.js";
 
-  export let userSession;
-  export let schools = [];
+  let userSession = null;
+  let schools = [];
   const defaultImage =
     "https://inlogiq.com/wp-content/uploads/2021/06/blog-4.png";
 
-  $: if (userSession) userSession = userSession;
-  $: if (schools.length) schools = schools;
+  onMount(async () => {
+    userSession = JSON.parse(localStorage.getItem("userStorage"));
+    console.log("userSession Header", userSession);
+    if (userSession) schools = await getSchools();
+  });
 
   const groups = [
     { id: 1, name: 1 },
@@ -81,7 +87,7 @@
       await createCourse(course);
       await push("/");
       location.reload();
-
+      
       disabled = false;
       loading = false;
     } catch (error) {
@@ -120,7 +126,8 @@
         class="nav col-12 col-lg-auto me-lg-auto mb-2 ms-2 justify-content-center mb-md-0"
       >
         <li>
-          <a href="/" class="nav-link px-2 text-white active" use:link>Inicio</a>
+          <a href="/" class="nav-link px-2 text-white active" use:link>Inicio</a
+          >
         </li>
       </ul>
 

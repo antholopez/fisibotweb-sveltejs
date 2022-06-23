@@ -9,9 +9,10 @@
 
 <style>
   .footer {
-    position: fixed;
-    left: 0;
+    position: absolute;
+    right: 0;
     bottom: 0;
+    left: 0;
     width: 100%;
   }
 </style>
