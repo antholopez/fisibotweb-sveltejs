@@ -15,5 +15,5 @@
 
 <main>
   <Router {routes} on:conditionsFailed={conditionsFailed} />
-  <Footer />
+  <!-- <Footer /> -->
 </main>

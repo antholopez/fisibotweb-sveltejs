@@ -14,10 +14,10 @@ export const notify = (status, title, text) => {
       showCloseButton: true,
       autoclose: true,
       autotimeout: 5000,
-      gap: 90,
-      distance: 50,
+      gap: 20,
+      distance: 20,
       type: 1,
-      position: "right top",
+      position: "right bottom",
     });
   } catch (error) {
     console.log("notify error: ", error);

@@ -138,17 +138,17 @@
           >
         </div>
       {:else}
-        <div class="col-12 col-lg-auto me-3">
+        <!-- <div class="col-12 col-lg-auto me-3">
           <button
             class="btn btn-outline-light"
             type="submit"
             data-bs-toggle="modal"
             data-bs-target="#staticBackdrop">Crear curso</button
           >
-        </div>
+        </div> -->
 
         <!-- Modal -->
-        <div
+        <!-- <div
           class="modal fade text-black"
           id="staticBackdrop"
           data-bs-backdrop="static"
@@ -260,7 +260,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div class="flex-shrink-0 dropdown">
           <a
