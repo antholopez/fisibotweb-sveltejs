@@ -1,5 +1,6 @@
 import Home from './pages/Home.svelte'
 import Login from "./pages/Login.svelte";
+import CourseId from "./pages/courses/_id.svelte";
 import { wrap } from "svelte-spa-router/wrap";
 
 export const routes = {
@@ -13,4 +14,5 @@ export const routes = {
       },
     ],
   }),
+  "/courses/:id": CourseId
 };

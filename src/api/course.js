@@ -11,3 +11,9 @@ export const getCourses = async () => {
   console.log("getCourses: ", data);
   return data;
 }
+
+export const getCourse = async (id) => {
+  const { data } = await get(`/courses/${id}`);
+  console.log("getCourse: ", data);
+  return data;
+}

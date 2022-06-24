@@ -205,7 +205,7 @@
       {#each filteredCourses as course}
         <div class="col">
           <div class="card h-100">
-            <a href="/courses/1">
+            <a href="/courses/{course.id}" use:link>
               <img
                 src={course.image}
                 class="card-img-top"
@@ -214,7 +214,7 @@
               />
             </a>
             <div class="card-body">
-              <a class="set-href" href="/courses/1">
+              <a class="set-href" href="/courses/{course.id}" use:link>
                 <h5 class="card-title text-uppercase">{course.name}</h5>
               </a>
               <p class="card-text">
