@@ -192,7 +192,7 @@
           class="form-control text-dark rounded-0"
           bind:value={textSearch}
           on:keyup={searchCourses}
-          placeholder="Buscar un curso"
+          placeholder="Escriba el curso que desea buscar"
         />
       </div>
       <div class="col-4 d-md-flex justify-content-md-end">
