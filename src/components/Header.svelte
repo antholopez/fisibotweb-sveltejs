@@ -75,7 +75,7 @@
           >
         </div>
       {:else}
-        <div class="col-md-3 text-end flex-shrink-0 dropdown">
+        <div class="dropdown text-end">
           <a
             href="#"
             class="d-block link-light text-decoration-none dropdown-toggle"
@@ -93,7 +93,7 @@
             />
           </a>
           <ul
-            class="dropdown-menu text-small shadow"
+            class="dropdown-menu text-small"
             aria-labelledby="dropdownUser2"
           >
             <li><a class="dropdown-item" href="#">Mi perfil</a></li>

@@ -33,8 +33,9 @@ instance.interceptors.response.use(
   async (error) => {
     const { response } = error;
     const { status, statusText } = response;
-    if (status === 401 && statusText === "Unauthorized" && !isAuthenticated) {
+    if (status === 401 && statusText === "Unauthorized") {
       try {
+        console.log("axios response 401: ", response);
         const url = error.config.url;
         localStorage.removeItem("userStorage");
         Cookies.remove("jwt");
@@ -55,7 +56,6 @@ instance.interceptors.response.use(
         console.log("axios response: ", err);
       }
     }
-    isAuthenticated = false;
   }
 );
 
