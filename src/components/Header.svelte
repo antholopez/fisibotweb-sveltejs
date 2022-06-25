@@ -4,12 +4,12 @@
   import logo from "./../assets/svelte.png";
   import { userStorage } from "./../store.js";
   import { onMount } from "svelte";
-  import * as spa from 'svelte-spa-router'
-  
+  import * as spa from "svelte-spa-router";
+
   let viewCenterTabs = false;
   let getLocation = spa.location;
 
-  viewCenterTabs = $getLocation.split('/')[1] === 'courses' ? true : false;
+  viewCenterTabs = $getLocation.split("/")[1] === "courses" ? true : false;
 
   let userSession = null;
 
@@ -36,28 +36,25 @@
       class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between"
     >
       <div class="d-flex align-items-center col-md-3 mb-2 mb-md-0">
-        <a
-          href="/"
-          class="text-white text-decoration-none me-2"
-          use:link
-        >
+        <a href="/" class="text-white text-decoration-none me-2" use:link>
           <img src={logo} alt="" width="40" height="32" />
           <span class="fs-4">Fisibot</span>
         </a>
-        <ul
-          class="nav"
-        >
+        <ul class="nav">
           <li>
-            <a href="/" class="nav-link px-2 text-white active" use:link>Inicio</a
+            <a href="/" class="nav-link px-2 text-white active" use:link
+              >Inicio</a
             >
           </li>
         </ul>
       </div>
 
-      {#if viewCenterTabs}
-        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+      <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+        {#if viewCenterTabs}
           <li class="nav-item">
-            <a class="nav-link text-white active" aria-current="page" href="#">Dashboard</a>
+            <a class="nav-link text-white active" aria-current="page" href="#"
+              >Dashboard</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link text-white" href="#">Sesiones</a>
@@ -65,8 +62,8 @@
           <li class="nav-item">
             <a class="nav-link text-white" href="#">Estudiantes</a>
           </li>
-        </ul>
-      {/if}
+        {/if}
+      </ul>
 
       {#if !userSession}
         <div class="col-md-3 text-end">
@@ -75,7 +72,7 @@
           >
         </div>
       {:else}
-        <div class="dropdown text-end">
+        <div class="flex-shrink-0 dropdown col-md-3 text-end">
           <a
             href="#"
             class="d-block link-light text-decoration-none dropdown-toggle"
@@ -92,10 +89,7 @@
               loading="lazy"
             />
           </a>
-          <ul
-            class="dropdown-menu text-small"
-            aria-labelledby="dropdownUser2"
-          >
+          <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownUser2">
             <li><a class="dropdown-item" href="#">Mi perfil</a></li>
             <li><hr class="dropdown-divider" /></li>
             <li>
