@@ -6,10 +6,12 @@
   import { onMount } from "svelte";
   import * as spa from "svelte-spa-router";
 
+  const routesForTabs = ['courses', 'students'];
+
   let viewCenterTabs = false;
   let getLocation = spa.location;
 
-  viewCenterTabs = $getLocation.split("/")[1] === "courses" ? true : false;
+  viewCenterTabs =  routesForTabs.includes($getLocation.split("/")[1]) ? true : false;
 
   let userSession = null;
 
@@ -60,7 +62,7 @@
             <a class="nav-link text-white" href="#">Sesiones</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="#">Estudiantes</a>
+            <a class="nav-link text-white" href="/students" use:link>Estudiantes</a>
           </li>
         {/if}
       </ul>
