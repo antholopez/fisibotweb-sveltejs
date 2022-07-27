@@ -59,7 +59,7 @@ instance.interceptors.response.use(
   }
 );
 
-export const get = (url) => instance.get(url);
+export const get = (url) => instance.get(url).then((response) => response.data);
 export const post = (url, data) => instance.post(url, data);
 export const patch = (url, data) => instance.patch(url, data);
 export const del = (url) => instance.delete(url);
