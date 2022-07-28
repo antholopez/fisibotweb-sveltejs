@@ -1,7 +1,7 @@
 <script>
   import { push } from "svelte-spa-router";
   import logoChatbot from "./../assets/chatbot.png";
-  import { userStorage } from "./../store.js";
+  import { authStore } from "./../store.js";
   import { login } from "./../api/auth.js";
   import Header from "./../components/Header.svelte";
   import { notify } from "./../utils/notification.js";
@@ -18,7 +18,7 @@
       let response = await login(user);
       response.accessToken = undefined;
 
-      $userStorage = response;
+      authStore.setUserSession(response);
       await push("/");
       loading = false;
       notify("success", "Bienvenido", "Inicio de sesión exitoso");

@@ -1,7 +1,5 @@
 import { get, post, patch, del, setBearerToken } from "./../axios.js";
-import { coursesStore } from "./../store/course.js";
-
-let courses = [];
+import { courseStore } from "./../store.js";
 
 export const createCourse = async (data) => {
   const { data: course } = await post("/courses", data);
@@ -10,10 +8,10 @@ export const createCourse = async (data) => {
 };
 
 export const getCourses = async () => {
-  coursesStore.subscribe((value) => (courses = value));
+  let courses = courseStore.get();
 
   const data = courses.length ? courses : await get("/courses");
-  if (!courses.length) coursesStore.setcourses(data);
+  if (!courses.length) courseStore.set(data);
 
   return data;
 };

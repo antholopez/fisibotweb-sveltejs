@@ -2,28 +2,29 @@
   import { logout } from "./../api/auth.js";
   import { link, push } from "svelte-spa-router";
   import logo from "./../assets/svelte.png";
-  import { userStorage } from "./../store.js";
+  import { authStore } from "./../store.js";
   import { onMount } from "svelte";
   import * as spa from "svelte-spa-router";
 
-  const routesForTabs = ['courses', 'students'];
+  const routesForTabs = ["courses", "students"];
 
   let viewCenterTabs = false;
   let getLocation = spa.location;
+  const [, pathName, courseId] = $getLocation.split("/");
 
-  viewCenterTabs =  routesForTabs.includes($getLocation.split("/")[1]) ? true : false;
+  viewCenterTabs = routesForTabs.includes(pathName) ? true : false;
 
   let userSession = null;
 
   onMount(async () => {
-    userSession = JSON.parse(localStorage.getItem("userStorage"));
+    userSession = authStore.getUserSession();
     console.log("userSession Header", userSession);
   });
 
   const closeSession = async () => {
     try {
       await logout();
-      $userStorage = null;
+      authStore.setUserSession(null);
       await push("/");
       location.reload();
     } catch (error) {
@@ -45,7 +46,7 @@
         <ul class="nav">
           <li>
             <a href="/" class="nav-link px-2 text-white active" use:link
-              >Inicio</a
+              >Mis Cursos</a
             >
           </li>
         </ul>
@@ -54,15 +55,24 @@
       <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
         {#if viewCenterTabs}
           <li class="nav-item">
-            <a class="nav-link text-white active" aria-current="page" href="#"
-              >Dashboard</a
+            <a
+              class="nav-link text-white active"
+              aria-current="page"
+              href="/courses/{courseId}"
+              use:link>Dashboard</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="#">Sesiones</a>
+            <a class="nav-link text-white" href="/courses/{courseId}/session" use:link
+              >Sesiones</a
+            >
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="/students" use:link>Estudiantes</a>
+            <a
+              class="nav-link text-white"
+              href="/courses/{courseId}/students"
+              use:link>Estudiantes</a
+            >
           </li>
         {/if}
       </ul>
@@ -91,7 +101,10 @@
               loading="lazy"
             />
           </a>
-          <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownUser2">
+          <ul
+            class="dropdown-menu dropdown-menu-lg-end"
+            aria-labelledby="dropdownUser2"
+          >
             <li><a class="dropdown-item" href="#">Mi perfil</a></li>
             <li><hr class="dropdown-divider" /></li>
             <li>

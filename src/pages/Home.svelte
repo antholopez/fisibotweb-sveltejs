@@ -8,6 +8,7 @@
   import Header from "./../components/Header.svelte";
   import { Modal, ModalBody, ModalHeader } from "sveltestrap";
   import { notify } from "./../utils/notification.js";
+  import { authStore, academicSemesterStore, cycleStore, groupStore } from "./../store.js";
 
   let open = false;
   const toggle = () => (open = !open);
@@ -22,7 +23,7 @@
     "https://inlogiq.com/wp-content/uploads/2021/06/blog-4.png";
 
   onMount(async () => {
-    userSession = JSON.parse(localStorage.getItem("userStorage"));
+    userSession = authStore.getUserSession();
     console.log("userSession Home", userSession);
     if (userSession) {
       loading = true;
@@ -34,23 +35,9 @@
     }
   });
 
-  const groups = [
-    { id: 1, name: 1 },
-    { id: 2, name: 2 },
-  ];
-  const academicSemesters = [{ name: "2022-1" }, { name: "2022-2" }];
-  const cycles = [
-    { name: "I" },
-    { name: "II" },
-    { name: "III" },
-    { name: "IV" },
-    { name: "V" },
-    { name: "VI" },
-    { name: "VII" },
-    { name: "VIII" },
-    { name: "IX" },
-    { name: "X" },
-  ];
+  const groups = groupStore.get();
+  const academicSemesters = academicSemesterStore.get();
+  const cycles = cycleStore.get();
 
   let course = {
     name: null,
@@ -107,10 +94,9 @@
   }
 
   const createNewCourse = async () => {
-    try {
-      loadingForm = true;
-      disabledForm = true;
+    loadingForm = true;
 
+    try {
       course.description = course.name;
       course.image = defaultImage;
       const newCourse = await createCourse(course);
@@ -118,15 +104,13 @@
       notify("success", "Creación del curso exitoso");
 
       filteredCourses = [...filteredCourses, newCourse];
-
-      disabledForm = false;
-      loadingForm = false;
     } catch (error) {
       console.log("error", error);
       open = !open;
-      disabledForm = false;
-      loadingForm = false;
     }
+    
+    disabledForm = false;
+    loadingForm = false;
   };
 </script>
 

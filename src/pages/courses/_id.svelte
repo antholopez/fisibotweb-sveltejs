@@ -3,6 +3,7 @@
   import Loading from "./../../components/Loading.svelte";
   import { onMount } from "svelte";
   import Header from "./../../components/Header.svelte";
+  import { authStore } from "./../../store.js";
 
   export let params = {};
   console.log("params", params);
@@ -12,7 +13,7 @@
 
   onMount(async () => {
     const id = Number(params.id);
-    userSession = JSON.parse(localStorage.getItem("userStorage"));
+    userSession = authStore.getUserSession();
     if (userSession) {
       loading = true;
       course = await getCourse(id);

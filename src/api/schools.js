@@ -1,12 +1,11 @@
 import { get, post, patch, del, setBearerToken } from "./../axios.js";
-import { schoolsStore } from "./../store/school.js";
+import { schoolStore } from "./../store.js";
 
 export const getSchools = async () => {
-  let schools = [];
-  schoolsStore.subscribe((value) => (schools = value));
+  let schools = schoolStore.get();
 
   const data = schools.length ? schools : await get("/schools");
-  if (!schools.length) schoolsStore.setSchools(data);
+  if (!schools.length) schoolStore.set(data);
 
   return data;
 };
